@@ -23,6 +23,7 @@
 
 import sys
 import argparse
+import csv, os, time
 
 from jetson_inference import detectNet
 from jetson_utils import imageSource, imageOutput, Log
@@ -52,9 +53,9 @@ output = imageOutput(args.output, argv=sys.argv) if args.output else None
 #  net = detectNet(args.network, sys.argv, args.threshold)
 
 # note: to hard-code the paths to load a model, the following API can be used:
-
-net = detectNet(model="models/mb1-ssd.onnx", labels="models/labels.txt",
-                input_blob="input_0", output_cvg="scores", output_bbox="boxes", 
+# change the detectNet model= parameter to test the different engines tensorRT builds
+net = detectNet(model="models/##########", labels="models/labels.txt",
+                input_blob="input.1", output_cvg="scores", output_bbox="boxes", 
                 threshold=args.threshold)
 
 # capture the input image
@@ -62,17 +63,37 @@ img = input.Capture()
 if img is None:
     raise SystemExit("Failed to load input image: {}".format(args.input))
 
-# detect objects in the image (with overlay)
+# one real detection call to get results/overlay for display or saving
 detections = net.Detect(img, overlay=args.overlay)
-
-# print the detections
 print("detected {:d} objects in image".format(len(detections)))
 for detection in detections:
     print(detection)
+
+# then repeat inference to get a stable FPS reading
+for _ in range(50):
+    net.Detect(img, overlay="none")
 
 # render or save the image if requested
 if output:
     output.Render(img)
 
 # print out performance info
+net.PrintProfilerTimes()
+
+log_path = "benchmark_log.csv"
+new_file = not os.path.exists(log_path)
+
+with open(log_path, "a", newline="") as f:
+    writer = csv.writer(f)
+    if new_file:
+        writer.writerow(["timestamp", "model", "num_detections",
+                          "network_fps", "network_time_ms"])
+    writer.writerow([
+        time.strftime("%Y-%m-%d %H:%M:%S"),
+        args.model,
+        len(detections),
+        round(net.GetNetworkFPS(), 2),
+        round(net.GetNetworkTime(), 2),
+    ])
+
 net.PrintProfilerTimes()
