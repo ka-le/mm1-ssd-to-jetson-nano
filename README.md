@@ -3,13 +3,13 @@ baseline:- since there is no quantization stated, it runs on fp32
 trtexec --onnx-models/mb1-ssd.onnx --saveEngine=models/basecase.engine --iterations=10 --avgRuns=10
 
 int8:
-trtexec --onnx-models/mb1-ssd.onnx --saveEngine=models/basecase.engine --int8 --iterations=10 --avgRuns=10
+trtexec --onnx-models/mb1-ssd.onnx --saveEngine=models/int8.engine --int8 --iterations=10 --avgRuns=10
 
 fp16:
-trtexec --onnx-models/mb1-ssd.onnx --saveEngine=models/basecase.engine --fp16 --iterations=10 --avgRuns=10
+trtexec --onnx-models/mb1-ssd.onnx --saveEngine=models/fp16.engine --fp16 --iterations=10 --avgRuns=10
 
 larger workspace (alloted more memory to use) to let TensorRT consider more kernel/tactic options:
-trtexec --onnx-models/mb1-ssd.onnx --saveEngine=models/basecase.engine --fp16 --workspace=4096 --iterations=10 --avgRuns=10
+trtexec --onnx-models/mb1-ssd.onnx --saveEngine=models/fp16workspace4096.engine --fp16 --workspace=4096 --iterations=10 --avgRuns=10
 
 # To run the engine: 
 python3 object_detect.py models/input.jpg --output output/output.jpg --network=ssd-mobilenet-v2
