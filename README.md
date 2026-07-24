@@ -1,4 +1,7 @@
-# optimizations which were run
+# Overview
+Used this neural net (https://github.com/qfgaohao/pytorch-Ssd) to run on the Jetson Nano. Converted the Single Shot Detection into an ONNX file and then used TensorRT to apply optimizations and convert into an engine. In order to run inference I used jetson-inference (https://github.com/dusty-nv/jetson-inference). Can also work to detect live camera streams. 
+
+# Optimizations which were run
 baseline:- since there is no quantization stated, it runs on fp32
 trtexec --onnx-models/mb1-ssd.onnx --saveEngine=models/basecase.engine --iterations=10 --avgRuns=10
 
