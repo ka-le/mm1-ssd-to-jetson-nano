@@ -25,12 +25,10 @@ import sys
 import argparse
 import jetson.inference
 import jetson.utils
-
-# from jetson.inference import detectNet
-# from jetson.utils import imageSource, imageOutput, Log
+import os
 
 # parse the command line
-parser = argparse.ArgumentParser(description="Locate objects in an image using an object detection DNN.", 
+parser = argparse.ArgumentParser(description="Locate objects in a video using an object detection DNN.", 
                                  # formatter_class=argparse.RawTextHelpFormatter, 
                                  epilog=jetson.inference.detectNet.Usage() + jetson.utils.videoSource.Usage() + jetson.utils.videoOutput.Usage() + jetson.utils.Log.Usage())
 
@@ -61,29 +59,49 @@ net = jetson.inference.detectNet(args.network, sys.argv, args.threshold)
 #                input_blob="Input", output_cvg="NMS", output_bbox="NMS_1", 
 #                threshold=args.threshold)
 
-# capture the input image
-img = input.Capture()
-if img is None:
-    raise SystemExit("Failed to load input image: {}".format(args.input))
 
-# one real detection call to get results/overlay for display or saving
-detections = net.Detect(img, overlay=args.overlay)
-print("detected {:d} objects in image".format(len(detections)))
-
-# then repeat inference to get a stable FPS reading
-net.Detect(img, overlay="none")
-
-
-for detection in detections:
-    print(detection)
-
-
-# render or save the image if requested
-if output:
+# for videos
+while True
+	img = input.Capture()
+	if img is None:
+		continue
+	detections = net.Detect(img, overlay=args.overlay)
+	print("detected {:d} objects in image".format(len(detections)))
+	for detection in detections:
+		print(detection)
 	output.Render(img)
 	output.SetStatus("{:s} | Network {:.0f} FPS".format("ssd-inception-v2", net.GetNetworkFPS()))
-	# print out performance info
 	net.PrintProfilerTimes()
+	if not input.IsStreaming() or not output.IsStreaming():
+		break
+
+## uncomment the bottom lines if you want to optimize the system to only run on photos
+
+
+
+## capture the input image
+#img = input.Capture()
+#if img is None:
+#    raise SystemExit("Failed to load input image: {}".format(args.input))
+
+## one real detection call to get results/overlay for display or saving
+#detections = net.Detect(img, overlay=args.overlay)
+#print("detected {:d} objects in image".format(len(detections)))
+
+## then repeat inference to get a stable FPS reading
+#net.Detect(img, overlay="none")
+
+
+#for detection in detections:
+    #print(detection)
+
+
+## render or save the image if requested
+#if output:
+#	output.Render(img)
+#	output.SetStatus("{:s} | Network {:.0f} FPS".format("ssd-inception-v2", net.GetNetworkFPS()))
+	# print out performance info
+#	net.PrintProfilerTimes()
 
 log_path = "benchmark_log.csv"
 new_file = not os.path.exists(log_path)
