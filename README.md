@@ -1,29 +1,21 @@
-# mm1-ssd-to-jetson-nano
+# optimizations which were run
+baseline:- since there is no quantization stated, it runs on fp32
+trtexec --onnx-models/mb1-ssd.onnx --saveEngine=models/basecase.engine --iterations=10 --avgRuns=10
 
-# baseline FP32
-trtexec --onnx=models/mb1-ssd.onnx --saveEngine=models/mb1-ssd_fp32.engine \
-    --explicitBatch
+int8:
+trtexec --onnx-models/mb1-ssd.onnx --saveEngine=models/basecase.engine --int8 --iterations=10 --avgRuns=10
 
-# FP16 (big win on Jetson's Tensor Cores)
-trtexec --onnx=models/mb1-ssd.onnx --saveEngine=models/mb1-ssd_fp16.engine \
-    --fp16 --explicitBatch
+fp16:
+trtexec --onnx-models/mb1-ssd.onnx --saveEngine=models/basecase.engine --fp16 --iterations=10 --avgRuns=10
 
-# larger workspace (lets TensorRT consider more kernel/tactic options)
-trtexec --onnx=models/mb1-ssd.onnx --saveEngine=models/mb1-ssd_fp16_ws4096.engine \
-    --fp16 --workspace=4096 --explicitBatch
+larger workspace (alloted more memory to use) to let TensorRT consider more kernel/tactic options:
+trtexec --onnx-models/mb1-ssd.onnx --saveEngine=models/basecase.engine --fp16 --workspace=4096 --iterations=10 --avgRuns=10
 
---workspace: megabytes of memory (e.g., 3000 MB) for TensorRT layer optimization
---fp16: Configures the Jetson Nano to run the model in 16-bit precision, doubling inference speed compared to 32-bit (FP32).
-
-To run the engine: 
-python object_detect.py models/input.jpg --output models/output.jpg
+# To run the engine: 
+python3 object_detect.py models/input.jpg --output output/output.jpg --network=ssd-mobilenet-v2
 
 # View the engine graph
-with gfile.FastGFile("trt_graph.pb", 'wb') as f:
-        f.write(your_trt_graph.SerializeToString())
-print("TRT model is stored!")
-
-or try using /trt-engine-explorer/
+trtexec --loadEngine=${NETWORK_NAME}.engine --dumpLayerInfo
 
 | Optimization                 | What it does                                               | Typical effect                                              |
 | ---------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------- |
@@ -35,3 +27,10 @@ or try using /trt-engine-explorer/
 | Dynamic shapes               | Supports multiple input sizes efficiently                  | Flexibility with some overhead                              |
 | CUDA Graphs                  | Reduces CPU launch overhead                                | Lower latency for repeated inference                        |
 | Sparsity                     | Uses sparse weights if supported                           | Faster inference on compatible GPUs and models              |
+
+All models were checked against models/input.jpg and output/ contains the engine build, inference times and optimizaion, architecture of engine, and output image generated
+
+# Jetson inference
+in order to run this file successfully, you need to change code in the jetson-inference/utils/python/bindings CMakeList
+
+

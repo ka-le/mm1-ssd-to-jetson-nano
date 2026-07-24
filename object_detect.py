@@ -25,7 +25,6 @@ import sys
 import argparse
 import jetson.inference
 import jetson.utils
-from pathlib import Path
 
 # from jetson.inference import detectNet
 # from jetson.utils import imageSource, imageOutput, Log
@@ -38,7 +37,7 @@ parser = argparse.ArgumentParser(description="Locate objects in an image using a
 parser.add_argument("input", type=str, help="Path to the input image file")
 parser.add_argument("--output", type=str, default="", help="Path to the output image file or display URI")
 parser.add_argument("--overlay", type=str, default="box,labels,conf", help="detection overlay flags (e.g. --overlay=box,labels,conf)\nvalid combinations are:  'box', 'labels', 'conf', 'none'")
-# parser.add_argument("--network", type=str, default="ssd-mobilenet-v2", help="pretrained model to load(see below for options)")
+parser.add_argument("--network", type=str, default="ssd-mobilenet-v2", help="pretrained model to load(see below for options)")
 parser.add_argument("--threshold", type=float, default=0.5, help="minimum detection threshold to use") 
 
 try:
@@ -53,15 +52,14 @@ input = jetson.utils.videoSource(args.input, argv=sys.argv)
 output = jetson.utils.videoOutput(args.output, argv=sys.argv) if args.output else None
 	
 # load the object detection network
-#net = jetson.inference.detectNet(args.network, sys.argv, args.threshold)
+net = jetson.inference.detectNet(args.network, sys.argv, args.threshold)
 
 # note: to hard-code the paths to load a model, the following API can be used:
 # change the detectNet model= parameter to test the different engines tensorRT builds
-path = (/home/tiku/code/mm1-ssd-to-jetson-nano/SSD-Mobilenet-v2/ssd_mobilenet_v2_coco.uff.1.1.8201.GPU.FP16.engine).resolve()
-net = jetson.inference.detectNet(model=path,
-		labels="SSD-Mobilenet-v2/ssd_coco_labels.txt",
-                input_blob="Input", output_cvg="NMS", output_bbox="NMS_1", 
-                threshold=args.threshold)
+#net = jetson.inference.detectNet(model="/home/tiku/code/mm1-ssd-to-jetson-nano/SSD-Mobilenet-v2/ssd_mobilenet_v2_coco.uff.1.1.8201.GPU.FP16.engine",
+#		labels="SSD-Mobilenet-v2/ssd_coco_labels.txt",
+#                input_blob="Input", output_cvg="NMS", output_bbox="NMS_1", 
+#                threshold=args.threshold)
 
 # capture the input image
 img = input.Capture()

@@ -1,0 +1,43 @@
+[TRT]    CUDA engine context initialized on device GPU:
+[TRT]       -- layers       125
+[TRT]       -- maxBatchSize 1
+[TRT]       -- deviceMemory 13356032
+[TRT]       -- bindings     3
+[TRT]       binding 0
+                -- index   0
+                -- name    'Input'
+                -- type    FP32
+                -- in/out  INPUT
+                -- # dims  3
+                -- dim #0  3
+                -- dim #1  300
+                -- dim #2  300
+[TRT]       binding 1
+                -- index   1
+                -- name    'NMS'
+                -- type    FP32
+                -- in/out  OUTPUT
+                -- # dims  3
+                -- dim #0  1
+                -- dim #1  100
+                -- dim #2  7
+[TRT]       binding 2
+                -- index   2
+                -- name    'NMS_1'
+                -- type    FP32
+                -- in/out  OUTPUT
+                -- # dims  3
+                -- dim #0  1
+                -- dim #1  1
+                -- dim #2  1
+
+
+[TRT]    ------------------------------------------------
+[TRT]    Timing Report /usr/local/bin/networks/SSD-Mobilenet-v2/ssd_mobilenet_v2_coco.uff
+[TRT]    ------------------------------------------------
+[TRT]    Pre-Process   CPU   0.06667ms  CUDA   1.04938ms
+[TRT]    Network       CPU  59.18753ms  CUDA  58.21635ms
+[TRT]    Post-Process  CPU   0.06537ms  CUDA   0.06526ms
+[TRT]    Visualize     CPU  14.08137ms  CUDA  14.16172ms
+[TRT]    Total         CPU  73.40093ms  CUDA  73.49271ms
+

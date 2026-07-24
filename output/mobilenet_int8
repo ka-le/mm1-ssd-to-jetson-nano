@@ -1,0 +1,32 @@
+<detectNet.Detection object>
+   -- Confidence: 0.994141
+   -- ClassID: 1
+   -- Left:    459.47
+   -- Top:     174.023
+   -- Right:   601.348
+   -- Bottom:  587.168
+   -- Width:   141.877
+   -- Height:  413.145
+   -- Area:    58615.9
+   -- Center:  (530.409, 380.596)
+<detectNet.Detection object>
+   -- Confidence: 0.513672
+   -- ClassID: 1
+   -- Left:    644.37
+   -- Top:     161.375
+   -- Right:   705.278
+   -- Bottom:  385.107
+   -- Width:   60.9082
+   -- Height:  223.733
+   -- Area:    13627.2
+   -- Center:  (674.824, 273.241)
+[TRT]    ------------------------------------------------
+[TRT]    Timing Report /usr/local/bin/networks/SSD-Mobilenet-v2/ssd_mobilenet_v2_coco.uff
+[TRT]    ------------------------------------------------
+[TRT]    Pre-Process   CPU   0.11755ms  CUDA   0.99453ms
+[TRT]    Network       CPU  45.14970ms  CUDA  44.39193ms
+[TRT]    Post-Process  CPU   0.06375ms  CUDA   0.00052ms
+[TRT]    Visualize     CPU   7.16087ms  CUDA   7.23833ms
+[TRT]    Total         CPU  52.49188ms  CUDA  52.62531ms
+[TRT]    ------------------------------------------------
+
